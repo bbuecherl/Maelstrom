@@ -1,0 +1,106 @@
+body {
+    margin: 0 auto;
+    background: #4e9adb;
+    font: normal normal normal 16px "Gafata", serif;
+}
+.logo {
+    background-image: URL("Maelstrom.png");
+}
+header {
+    width: 100%;
+    padding-top: 290px;
+    background-size: 320px 320px;
+    background-repeat: no-repeat;
+    background-position: top center;
+    text-align: center;
+}
+header h1 {
+    width: 90%;
+    text-align: center;
+    margin: 0;
+    padding: 0 5%;
+    color: #FFF;
+    text-shadow: 0px -1px 0px #82b9f1;
+    font: normal bold normal 60px "Gafata", serif;
+}
+header h4 {
+    width: 90%;
+    text-align: center;
+    margin: 0;
+    padding: 0 5%;
+    color: #222;
+    text-shadow: 0px -1px 0px #1d619b;
+    font: normal bold normal 25px "Gafata", serif;                
+}
+.btn {
+    padding: 10px 20px;
+    background: #3e8ccf;
+    border: 1px solid #1d619b;
+    border-radius: 3px;
+    color: #000;
+    text-decoration: none;
+    box-shadow: inset 0px 1px 2px #4e9adb;
+    cursor: pointer;
+    outline: none;
+}
+.btn:hover {
+    background: #307cbc;
+    box-shadow: inset 0px 1px 2px #093b66;
+}
+.btn small {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#content {
+    width: 90%;
+    max-width: 800px;
+    margin: 40px auto;
+    padding:  2%;
+    background: #FFF;
+    border-radius: 15px;
+    box-shadow: 0px 1px 3px #000;
+}
+
+#note {
+    background: #EEE;
+    border: 1px solid #BBB;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+}
+#note a, #note b, #note i {
+    color: #365cff;
+}
+
+#content h2 {
+    margin: 0;
+    padding: 0;
+    color: #365cff;
+    text-shadow: 0px -1px 0px #000;
+    font-size: 35px;
+}
+#content h3 {
+    font-size: 24px;
+}
+#content .output {
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 5px;
+    font-family: serif;
+}
+#content code {
+    overflow: auto;
+}
+footer {
+    text-align: center;
+    color: #000;
+    padding-bottom: 30px;
+}
+footer a {
+    text-decoration: underline;
+    color: #000;
+}
+footer a:hover {
+    text-decoration: none;
+}

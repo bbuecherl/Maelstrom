@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Maelstrom</title>
+        <link rel="stylesheet" href="prism.css" type="text/css" media="all" />
+        <link rel="stylesheet" href="style.css" type="text/css" media="all" />
+    </head>
+    <body>
+        <header class="logo">
+            <h1>Maelstrom</h1>
+            <h4>Simple, fast and live updating template engine for client-side javascript</h4>
+            <br />
+            <br />
+            <a href="https://rawgithub.com/bbuecherl/Maelstrom/master/dist/Maelstrom.min.js" class="btn" target="_blank">Download Maelstrom.min.js <small>5.75kB</small></a>
+            <a href="https://github.com/bbuecherl/Maelstrom/" class="btn" target="_blank">View on Github</a>
+        </header>
+        <div id="content">
+            <div id="note"><b>Note:</b> Maelstrom and this Documentation are currently in <i>alpha</i>.
+            Found a bug? Fill a ticket <a href="https://github.com/bbuecherl/Maelstrom/issues/new" target="_blank">here</a></div>
+            <h2>What Maelstrom can do</h2>
+            <h3>Render static templates incredibly fast:</h3>
+            <pre><code id="code1" class="language-markup">
+div#exampleid
+    p This is a static template
+    span{color="green"} with different elements
+            </code></pre>
+            <pre><code id="js1" class="language-javascript">
+var tmpl = Maelstrom.compile(templateString);
+tmp.append(outputElement);
+            </code></pre>
+            <button class="render btn" data-code="1">Render >></button>
+            <br />
+            <br />
+            <div class="output" id="output1"></div>
+            <br />
+            <br />
+            <h3>Render templates with variables:</h3>
+            <pre><code id="code2" class="language-markup">
+h1 [[$title]]
+h3 [[$subtitle]]
+p content with variables: [[$content.val]]
+    input(value="[[$content.input]]")
+    | and even
+    span{color="[[$content.color]]"} variables in styles
+            </code></pre>
+            <pre><code id="js2" class="language-javascript">
+var obj = {
+    "title": "My Awesome Template",
+    "subtitle": "Rendered with Maelstrom",
+    "content": {
+        "val": "and variables of nested objects",
+        "input": "and variables in element attributes",
+        "color": "blue"
+    }
+};
+var tmpl = Maelstrom.compile(templateString);
+tmpl.render(obj);
+tmpl.append(outputElement);
+            </code></pre>
+            <button class="render btn" data-code="2" data-render="2">Render >></button>
+            <br />
+            <br />
+            <div class="output" id="output2"></div>
+            <br />
+            <br />
+            <h3>Render templates with live update subscribtion:</h3>
+            <pre><code id="code3" class="language-markup">
+div{background="blue"}
+    div{width="[[$animated]]", height="20px", background-color="red"}
+p state: [[$animated]]
+            </code></pre>
+            <pre><code id="js3" class="language-javascript">
+var obj = {
+    "animated": "1%"
+};
+var tmpl = Maelstrom.compile(templateString);
+tmpl.append(outputElement);
+//subscribe to the object
+tmpl.subscribe(obj);
+
+//updating object
+setInterval(function() {
+    obj.animated = ((parseInt(obj.animated,10)+1)%101)+"%";
+},100);
+            </code></pre>
+            <button class="render btn" data-code="3" data-subscribe="true">Render >></button>
+            <br />
+            <br />
+            <div class="output" id="output3"></div>
+            <br />
+            <br />
+
+            <h2>API Documentation</h2>
+            <h3>Coming soon...</h3>
+        </div>
+        <footer>
+            Made by <a href="http://bbuecherl.de/" target="_blank">@bbuecherl</a> |
+            License: <a href="http://bbuecherl.mit-license.org/" target="_blank">MIT</a>
+        </footer>
+
+        <script src="prism.js" type="text/Javascript"></script>
+        <script src="Maelstrom.min.js" type="text/Javascript"></script>
+        <script type="text/Javascript">
+            WebFontConfig = {
+                google: { families: [ "Gafata:400:latin" ] }
+            };
+            (function() {
+                var wf = document.createElement("script");
+                wf.src = ("https:" == document.location.protocol ? "https" : "http") +
+                "://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js";
+                wf.type = "text/javascript";
+                wf.async = "true";
+                var s = document.getElementsByTagName("script")[0];
+                s.parentNode.insertBefore(wf, s);
+            })(); 
+
+            var renders = document.getElementsByClassName("render");
+            var obj = {
+                animated: "1%"
+            };
+
+            setInterval(function() {
+                obj.animated = ((parseInt(obj.animated,10)+1)%101)+"%";
+            },100);
+
+            for(var i = 0; i < renders.length; ++i) {
+                renders[i].onclick = function() {
+                    var id = this.getAttribute("data-code"),
+                        code = document.getElementById("code"+id),
+                        out = document.getElementById("output"+id),
+                        tmp = Maelstrom.compile(code.innerHTML);
+                        out.innerHTML = "";
+                        tmp.append(out);
+
+                    if(this.hasAttribute("data-render"))
+                        tmp.render(JSON.parse(document.getElementById("js"+this.getAttribute("data-render")).innerHTML.split("var obj = ")[1].split("};")[0]+"\n}"));
+                    if(this.hasAttribute("data-subscribe"))
+                        tmp.subscribe(obj);
+                }
+            }
+
+        </script>
+    </body>
+</html>

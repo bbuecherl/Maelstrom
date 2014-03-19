@@ -17,7 +17,7 @@
         <div id="content">
             <div id="note"><b>Note:</b> Maelstrom and this Documentation are currently in <i>alpha</i>.
             Found a bug? Fill a ticket <a href="https://github.com/bbuecherl/Maelstrom/issues/new" target="_blank">here</a></div>
-            <h2>What Maelstrom can do</h2>
+            <h2 id="about">What Maelstrom can do</h2>
             <h3>Render static templates incredibly fast:</h3>
             <pre><code id="code1" class="language-markup">
 div#exampleid
@@ -41,7 +41,7 @@ h3 [[$subtitle]]
 p content with variables: [[$content.val]]
     input(value="[[$content.input]]")
     | and even
-    span{color="[[$content.color]]"} variables in styles
+    span{color="[[$content.color]]"}  variables in styles
             </code></pre>
             <pre><code id="js2" class="language-javascript">
 var obj = {
@@ -57,7 +57,7 @@ var tmpl = Maelstrom.compile(templateString);
 tmpl.render(obj);
 tmpl.append(outputElement);
             </code></pre>
-            <button class="render btn" data-code="2" data-render="2">Render >></button>
+            <button class="render btn" data-code="2" data-render="true">Render >></button>
             <br />
             <br />
             <div class="output" id="output2"></div>
@@ -90,8 +90,71 @@ setInterval(function() {
             <br />
             <br />
 
-            <h2>API Documentation</h2>
-            <h3>Coming soon...</h3>
+            <h2 id="api">API Documentation</h2>
+            <br />
+            <code class="language-javascript">Maelstrom.compile(templateString[, subscribtionObject])</code>
+            <big>Parameters:</big>
+            <ul>
+                <li><code>templateString</code> - template string, see <a href="#tmpl">Template Documentation</a></li>
+                <li><code>subscribtionObject</code> - <u>optional</u> - object to subscribe to, equal to:<br /><code style="margin-left: 190px">template.subscribe(subscribtionObject);</code></li>
+            </ul>
+            <big>Returns:</big> compiled <code>template</code> object
+            <br />
+            <br />
+            <br />
+            <code class="language-javascript">template.render(object)</code>
+            <big>Parameters:</big>
+            <ul>
+                <li><code>object</code> - applies this object to the template</li>
+            </ul>
+            <big>Returns:</big> <code>this</code>
+            <br />
+            <br />
+            <br />
+            <code class="language-javascript">template.subscribe(object)</code>
+            <big>Parameters:</big>
+            <ul>
+                <li><code>object</code> - object to subscribe to (updates the template, when the object changes)</li>
+            </ul>
+            <big>Returns:</big> <code>this</code>
+            <br />
+            <br />
+            <br />
+            <code class="language-javascript">template.unsubscribe()</code>
+            Function to unsubscribe the current subscribtion object, stops live updating.<br />
+            <big>Parameters:</big> none<br/>
+            <big>Returns:</big> <code>this</code>
+            <br />
+            <br />
+            <br />
+            <code class="language-javascript">template.append(element)</code>
+            <big>Parameters:</big>
+            <ul>
+                <li><code>element</code> - element to append the template to</li>
+            </ul>
+            <big>Returns:</big> <code>this</code>
+            <br />
+            <br />
+            <br />
+            <code class="language-javascript">template.remove(element)</code>
+            <big>Parameters:</big>
+            <ul>
+                <li><code>element</code> - element to remove the template from</li>
+            </ul>
+            <big>Returns:</big> <code>this</code>
+            <br />
+            <br />
+
+            <h2 id="tmpl">Template Documentation</h2>
+            <p>
+                The template syntax is inspired by <a href="http://jade-lang.com" target="_blank">Jade</a>.
+                Currently it does not support any logical operations.<br />
+                Variables can be included with <code>[[$variableName]]</code>.
+                Aditionally to the Jade-features you can add style attributes in <code>{...}</code>-Brackets after an element declaration.
+                <br />
+                <br />
+                More information about templates is coming soon.
+            </p>
         </div>
         <footer>
             Made by <a href="http://bbuecherl.de/" target="_blank">@bbuecherl</a> |
@@ -119,6 +182,16 @@ setInterval(function() {
                 animated: "1%"
             };
 
+            var render = {
+                "title": "My Awesome Template",
+                "subtitle": "Rendered with Maelstrom",
+                "content": {
+                    "val": "and variables of nested objects",
+                    "input": "and variables in element attributes",
+                    "color": "blue"
+                }
+            };
+
             setInterval(function() {
                 obj.animated = ((parseInt(obj.animated,10)+1)%101)+"%";
             },100);
@@ -133,7 +206,7 @@ setInterval(function() {
                         tmp.append(out);
 
                     if(this.hasAttribute("data-render"))
-                        tmp.render(JSON.parse(document.getElementById("js"+this.getAttribute("data-render")).innerHTML.split("var obj = ")[1].split("};")[0]+"\n}"));
+                        tmp.render(render);
                     if(this.hasAttribute("data-subscribe"))
                         tmp.subscribe(obj);
                 }

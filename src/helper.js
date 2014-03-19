@@ -116,7 +116,7 @@
 
             for(; i < str.length; ++i) {
                 if(str[i]==",") {
-                    list.push(str.slice(last,i-1).trim());
+                    list.push(str.slice(last,i).trim());
                     last = i+1;
                 }
             }
@@ -145,11 +145,10 @@
             name = name.split("-");
             for(var i = 0; i < name.length; ++i) {
                 if(i!==0)
-                    name[i] = name.slice(0,1).toUpperCase()+name.slice(1);
+                    name[i] = name[i].slice(0,1).toUpperCase()+name[i].slice(1);
             }
-            name.join("");
 
-            elm.style[name] = value;
+            elm.style[name.join("")] = value;
         },
 
         /**

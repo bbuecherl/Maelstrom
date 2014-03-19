@@ -88,8 +88,8 @@
                     if(next[i]=="}")
                         break;
                 }
-                elm = next.slice(1,i).trim();
-                next = next.slice(i+1);
+                elm = next.slice(1,i+1).replace("}","").trim();
+                next = next.slice(i+2);
 
                 list = splitArgs(elm);
 

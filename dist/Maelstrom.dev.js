@@ -1,10 +1,17 @@
 /**
- * Maelstrom v0.0.1-1403191230
+ * Maelstrom v0.0.1-1403191444
  * https://github.com/bbuecherl/Maelstrom/
  * by Bernhard Buecherl http://bbuecherl.de/
- */
-(function(global) {
+ * License: MIT http://bbuecherl.mit-license.org/ */
+(function(global, factory) {
+    if(typeof define === "function" && define.amd) {
+        define(["Maelstrom"], factory);
+    } else {
+        global.Maelstrom = factory();
+    }
+})(this,function() {
 "use strict";
+
     // https://gist.github.com/eliperelman/1035982 trim polyfill
     if(typeof "".trim !== "undefined")
         String.prototype.trim = function() {
@@ -180,7 +187,7 @@
 
             for(; i < str.length; ++i) {
                 if(str[i]==",") {
-                    list.push(str.slice(last,i-1).trim());
+                    list.push(str.slice(last,i).trim());
                     last = i+1;
                 }
             }
@@ -209,11 +216,10 @@
             name = name.split("-");
             for(var i = 0; i < name.length; ++i) {
                 if(i!==0)
-                    name[i] = name.slice(0,1).toUpperCase()+name.slice(1);
+                    name[i] = name[i].slice(0,1).toUpperCase()+name[i].slice(1);
             }
-            name.join("");
 
-            elm.style[name] = value;
+            elm.style[name.join("")] = value;
         },
 
         /**
@@ -564,8 +570,8 @@
                     if(next[i]=="}")
                         break;
                 }
-                elm = next.slice(1,i).trim();
-                next = next.slice(i+1);
+                elm = next.slice(1,i+1).replace("}","").trim();
+                next = next.slice(i+2);
 
                 list = splitArgs(elm);
 
@@ -624,5 +630,5 @@
                 this.domElement.appendChild(this.childs[i].domElement);
     };
 
-    global.Maelstrom = Maelstrom;
-})(window);
+    return Maelstrom;
+});

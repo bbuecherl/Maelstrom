@@ -24,7 +24,6 @@
             #loader-bar-inner {
                 width: 0%;
                 height: 5px;
-                background: #365cff;
                 margin: 0 auto;
             }
             #loader-progress {
@@ -47,11 +46,11 @@
     div#loader
         div#loader-bottom
             div#loader-bar
-                div#loader-bar-inner{width="[[$loader.prog]]"}
+                div#loader-bar-inner{width="[[$loader.prog]]",background-color="#365cff"}
             div#loader-progress [[$loader.prog]]
             div#loader-info [[$loader.info]], [[$variable]] and [[$loader.prog]]
     br
-    div#test.withClass.andSecondClass(data-attr = " test ", data-test="[[$variable]]" ) content here,
+    div#test.withClass.andSecondClass(data-attr = " test ", data-test = "[[$variable]]" ) content here,
         br
         | additional content
         br

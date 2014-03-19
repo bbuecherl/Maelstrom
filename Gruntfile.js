@@ -1,5 +1,6 @@
 module.exports = function(grunt) {
     var srcFiles = [                    
+            "src/amdSupport.js",
             "src/polyfill.js",
             "src/dom.js",
             "src/helper.js",
@@ -21,10 +22,10 @@ module.exports = function(grunt) {
                     + " * Maelstrom v<%= pkg.version %>-<%= grunt.template.today('yymmddHHMM') %>\n"
                     + " * https://github.com/bbuecherl/Maelstrom/\n"
                     + " * by Bernhard Buecherl http://bbuecherl.de/\n"
-                    + " */\n"
-                    + "(function(global) {\n\"use strict\";\n",
+                    + " * License: MIT http://bbuecherl.mit-license.org/"
+                    + " */\n",
                 seperator: "\n",
-                footer: "\n    global.Maelstrom = Maelstrom;\n})(window);\n"
+                footer: "\n    return Maelstrom;\n});\n"
             },
             dist: {
                 src: srcFiles,
@@ -38,6 +39,7 @@ module.exports = function(grunt) {
                     + " * Maelstrom v<%= pkg.version %>-<%= grunt.template.today('yymmddHHMM') %>\n"
                     + " * https://github.com/bbuecherl/Maelstrom/\n"
                     + " * by Bernhard Buecherl http://bbuecherl.de/\n"
+                    + " * License: MIT http://bbuecherl.mit-license.org/"
                     + " */\n"
             },
             dist: {
@@ -48,7 +50,7 @@ module.exports = function(grunt) {
 
         jshint: {
             dev: [devFile],
-            src: srcFiles,
+            src: srcFiles.slice(1), //exclude amdSupport.js
             options: {
                 force: true,
                 reporter: require("jshint-stylish"),

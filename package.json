@@ -1,0 +1,14 @@
+{
+    "name": "Maelstrom",
+    "version": "0.0.1",
+    "author": "bbuecherl <bernhard.buecherl@gmail.com>",
+    "description": "Simple, fast and live updating template engine",
+
+    "devDependencies": {
+        "grunt-cli": "*",
+        "grunt-contrib-concat": "*",
+        "grunt-contrib-uglify": "*",
+        "grunt-contrib-jshint": "*",
+        "jshint-stylish": "*"
+    }
+}

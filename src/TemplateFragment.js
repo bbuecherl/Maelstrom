@@ -24,10 +24,15 @@
                 this.childs = buildStructure(this,root,data);
 
             //build element
-            elm = splitByIdentifiers(this.line);
-            next = this.line.slice(elm[0].length);
-            node = elm[0].toLowerCase();
-
+            if(this.line[0]=="#"||this.line[0]==".") {
+                //default is div
+                next = this.line;
+                node = "div";
+            } else {
+                elm = splitByIdentifiers(this.line);
+                next = this.line.slice(elm[0].length);
+                node = elm[0].toLowerCase();
+            }
             this.domElement = $createElement(node);
 
             //classes & ids

@@ -7,6 +7,7 @@ module.exports = function(grunt) {
             "src/buildStructure.js",
             "src/Maelstrom.js",
             "src/Template.js",
+            "src/TemplateElement.js",
             "src/TemplateFragment.js"
         ],
         devFile = "dist/Maelstrom.dev.js",

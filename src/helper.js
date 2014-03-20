@@ -11,13 +11,17 @@
                 lines = str.split("\n"), 
                 i = 0,
                 len = lines.length,
-                count = 0;
+                count = 0,
+                comment = -1;
             
             for(;i<len;++i) {
                 count = countLeadingSpace(lines[i]);
-                if(lines[i].length!==0&&count!==lines[i].length) {
+                if(lines[i].charAt(count) == "/" && lines[i].charAt(count+1) == "/") {
+                    comment = count;
+                } else if(count !== lines[i].length && ( comment==-1 ? true : comment >= count )) {
                     arr.push(lines[i]);
                     off.push(count);
+                    comment = -1;
                 }
             }
             return {l: arr, o: off};
@@ -156,7 +160,7 @@
          * @static
          * @private
          */
-        _isSlashNode = ["br", "hr", "input", "img", "meta"],
+        _isSlashNode = ["br", "hr", "input", "img", "meta", "link"],
 
         /**
          * Test if element is slash node

@@ -1,5 +1,5 @@
 /**
- * Maelstrom v0.0.1-1403191444
+ * Maelstrom v0.0.1-1403201723
  * https://github.com/bbuecherl/Maelstrom/
  * by Bernhard Buecherl http://bbuecherl.de/
  * License: MIT http://bbuecherl.mit-license.org/ */
@@ -82,13 +82,17 @@
                 lines = str.split("\n"), 
                 i = 0,
                 len = lines.length,
-                count = 0;
+                count = 0,
+                comment = -1;
             
             for(;i<len;++i) {
                 count = countLeadingSpace(lines[i]);
-                if(lines[i].length!==0&&count!==lines[i].length) {
+                if(lines[i].charAt(count) == "/" && lines[i].charAt(count+1) == "/") {
+                    comment = count;
+                } else if(count !== lines[i].length && ( comment==-1 ? true : comment >= count )) {
                     arr.push(lines[i]);
                     off.push(count);
+                    comment = -1;
                 }
             }
             return {l: arr, o: off};
@@ -227,7 +231,7 @@
          * @static
          * @private
          */
-        _isSlashNode = ["br", "hr", "input", "img", "meta"],
+        _isSlashNode = ["br", "hr", "input", "img", "meta", "link"],
 
         /**
          * Test if element is slash node
@@ -288,7 +292,7 @@
          * @param {Object} [data] data object to subscribe the template to
          */
         compile: function(str, data) {
-            var tmp = new Template(str);
+            var tmp = new Template(str).create();
 
             if(typeof data !== "undefined")
                 tmp.subscribe(data);
@@ -300,26 +304,41 @@
     /**
      * Template constructor
      * @constructor
+     * @private
      *
      * @param {string} str template string
      */
     var Template = function(str) {
+        this.lines = splitLines(str);
+    };
+
+    Template.prototype.create = function() {
+        return new TemplateElement(this.lines);
+    };
+
+    /**
+     * Template element constructor
+     * @constructor
+     *
+     * @param {Array} lines template lines
+     */
+    var TemplateElement = function(lines) {
         this.fragments = [];
         this.listeners = {};
 
         this.subscription = false;
 
         // build structure
-        this.childs = buildStructure(this, this, splitLines(str));
+        this.childs = buildStructure(this, this, lines);
     };
 
     /**
      * Function to append the template to an element
      *
      * @param {Element} elm element
-     * @returns {Template} this
+     * @returns {TemplateElement} this
      */
-    Template.prototype.append = function(elm) {
+    TemplateElement.prototype.append = function(elm) {
         if(typeof this.frag === "undefined") {
             this.frag = $createFragment();
 
@@ -335,9 +354,9 @@
      * Function to remove the template from an element
      *
      * @param {Element} elm element
-     * @returns {Template} this
+     * @returns {TemplateElement} this
      */
-    Template.prototype.remove = function(elm) {
+    TemplateElement.prototype.remove = function(elm) {
         if(typeof this.frag !== "undefined")
             elm.removeChild(this.frag);
         return this;
@@ -349,9 +368,9 @@
      *
      * @param {string} path path identifier
      * @param {Function} listener listener function
-     * @returns {Template} this
+     * @returns {TemplateElement} this
      */
-    Template.prototype.on = function(path, listener) {
+    TemplateElement.prototype.on = function(path, listener) {
         if(!this.listeners.hasOwnProperty(path))
             this.listeners[path] = [];
         this.listeners[path].push(listener);
@@ -364,9 +383,9 @@
      *
      * @param {string} path path identifier
      * @param {Function} listener listener function
-     * @returns {Template} this
+     * @returns {TemplateElement} this
      */
-    Template.prototype.off = function(path, listener) {
+    TemplateElement.prototype.off = function(path, listener) {
         if(this.listeners.hasOwnProperty(path)) {
             var i = this.listeners[path].indexOf(listener);
             if(i!=-1)
@@ -381,9 +400,9 @@
      *
      * @param {string} path path identifier
      * @param {Object} value change value 
-     * @returns {Template} this
+     * @returns {TemplateElement} this
      */
-    Template.prototype.trigger = function(path, value) {
+    TemplateElement.prototype.trigger = function(path, value) {
         if(this.listeners.hasOwnProperty(path)) {
             for(var i = 0; i < this.listeners[path].length; ++i) {
                 this.listeners[path][i](value);
@@ -396,9 +415,9 @@
      * Function to render the template with a static object
      *
      * @param {Object} data data object
-     * @returns {Template} this
+     * @returns {TemplateElement} this
      */
-    Template.prototype.render = function(data) {
+    TemplateElement.prototype.render = function(data) {
         for(var path in this.listeners) {
             if(objHasVar(data, path))
                 this.trigger(path, objGetVar(data, path));
@@ -410,9 +429,9 @@
      * Function to subscribe the template to a living object
      *
      * @param {Object} data living data object
-     * @returns {Template} this
+     * @returns {TemplateElement} this
      */
-    Template.prototype.subscribe = function(data) {
+    TemplateElement.prototype.subscribe = function(data) {
         var parent, obj, i, bool, tmp;
         if(this.subscription) {
             for(var n in this.listeners) {
@@ -474,9 +493,9 @@
     /**
      * Function to unsubscribe the template
      *
-     * @returns {Template} this
+     * @returns {TemplateElement} this
      */
-    Template.prototype.unsubscribe = function() {
+    TemplateElement.prototype.unsubscribe = function() {
         return this.subscribe(false);
     };
 
@@ -506,10 +525,15 @@
                 this.childs = buildStructure(this,root,data);
 
             //build element
-            elm = splitByIdentifiers(this.line);
-            next = this.line.slice(elm[0].length);
-            node = elm[0].toLowerCase();
-
+            if(this.line[0]=="#") {
+                //default is div
+                next = this.line;
+                node = "div";
+            } else {
+                elm = splitByIdentifiers(this.line);
+                next = this.line.slice(elm[0].length);
+                node = elm[0].toLowerCase();
+            }
             this.domElement = $createElement(node);
 
             //classes & ids

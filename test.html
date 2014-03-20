@@ -57,6 +57,12 @@
         | and content with [[$variable]]
         br
         span and an span element
+    // this is an comment
+    #test
+        | can i include <strong>html</strong>? currently not, sorry
+    // and this
+        is a blocked comment
+
         </code></pre>
         <h3>Output:</h3>
         <div id="out"></div>
@@ -66,6 +72,7 @@
         <script src="src/Maelstrom.js" type="text/Javascript"></script>
         <script src="src/buildStructure.js" type="text/Javascript"></script>
         <script src="src/Template.js" type="text/Javascript"></script>
+        <script src="src/TemplateElement.js" type="text/Javascript"></script>
         <script src="src/TemplateFragment.js" type="text/Javascript"></script>
         <script type="text/Javascript">
             var obj = {
@@ -75,7 +82,7 @@
                 },
                 variable: "Variable"
             },
-            tmpl = Maelstrom.compile(document.getElementById("test").innerHTML, obj);    
+            tmpl = Maelstrom.compile(document.getElementById("test").innerHTML, obj);
             tmpl.append(document.getElementById("out"));
 
             setInterval(function() {

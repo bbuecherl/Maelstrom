@@ -63,17 +63,26 @@
     // and this
         is a blocked comment
 
+    if true
+        p this paragraph should be displayed.
+    else
+        p this paragraph should be always hidden.
+
+    ul
+        each i in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+            li [[$i]] [[$loader.info]]
         </code></pre>
         <h3>Output:</h3>
         <div id="out"></div>
         <script src="src/polyfill.js" type="text/Javascript"></script>
-        <script src="src/dom.js" type="text/Javascript"></script>
         <script src="src/helper.js" type="text/Javascript"></script>
-        <script src="src/Maelstrom.js" type="text/Javascript"></script>
+        <script src="src/dom.js" type="text/Javascript"></script>
         <script src="src/buildStructure.js" type="text/Javascript"></script>
+        <script src="src/logic/TemplateProcessor.js" type="text/Javascript"></script>
+        <script src="src/logic/EachProcessor.js" type="text/Javascript"></script>
         <script src="src/Template.js" type="text/Javascript"></script>
         <script src="src/TemplateElement.js" type="text/Javascript"></script>
-        <script src="src/TemplateFragment.js" type="text/Javascript"></script>
+        <script src="src/Maelstrom.js" type="text/Javascript"></script>
         <script type="text/Javascript">
             var obj = {
                 loader: {
@@ -81,9 +90,14 @@
                     info: "Testing...",
                 },
                 variable: "Variable"
-            },
-            tmpl = Maelstrom.compile(document.getElementById("test").innerHTML, obj);
+            };
+
+            console.time("compile");
+            
+            var tmpl = Maelstrom.compile(document.getElementById("test").innerHTML, obj);
             tmpl.append(document.getElementById("out"));
+
+            console.timeEnd("compile");
 
             setInterval(function() {
                 obj.loader.prog = ((parseInt(obj.loader.prog)+1)%101)+"%";

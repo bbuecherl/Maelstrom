@@ -1,182 +1,70 @@
     /**
      * Template element constructor
      * @constructor
-     *
-     * @param {Array} lines template lines
-     */
-    var TemplateElement = function(lines) {
-        this.fragments = [];
-        this.listeners = {};
-
-        this.subscription = false;
-
-        // build structure
-        this.childs = buildStructure(this, this, lines);
-    };
-
-    /**
-     * Function to append the template to an element
-     *
-     * @param {Element} elm element
-     * @returns {TemplateElement} this
-     */
-    TemplateElement.prototype.append = function(elm) {
-        if(typeof this.frag === "undefined") {
-            this.frag = $createFragment();
-
-            for(var i = 0, len = this.childs.length; i < len; ++i)
-                this.frag.appendChild(this.childs[i].domElement);
-        }
-
-        elm.appendChild(this.frag);
-        return this;
-    };
-
-    /**
-     * Function to remove the template from an element
-     *
-     * @param {Element} elm element
-     * @returns {TemplateElement} this
-     */
-    TemplateElement.prototype.remove = function(elm) {
-        if(typeof this.frag !== "undefined")
-            elm.removeChild(this.frag);
-        return this;
-    };
-
-    /**
-     * Function to add a change listener
      * @private
      *
-     * @param {string} path path identifier
-     * @param {Function} listener listener function
-     * @returns {TemplateElement} this
+     * @param {TemplateProcessor} proc template processor to be build on
      */
-    TemplateElement.prototype.on = function(path, listener) {
-        if(!this.listeners.hasOwnProperty(path))
-            this.listeners[path] = [];
-        this.listeners[path].push(listener);
-        return this;
-    };
+    var TemplateElement = function(proc) {
+        if(proc.node=="|"||proc.node=="logic") {
+            this.domElement = $createFragment();
+        } else {
+            this.domElement = $createElement(proc.node);
 
-    /**
-     * Function to remove a change listener
-     * @private
-     *
-     * @param {string} path path identifier
-     * @param {Function} listener listener function
-     * @returns {TemplateElement} this
-     */
-    TemplateElement.prototype.off = function(path, listener) {
-        if(this.listeners.hasOwnProperty(path)) {
-            var i = this.listeners[path].indexOf(listener);
-            if(i!=-1)
-                delete this.listeners[path][i];
-        }
-        return this;
-    };
+            if(proc.id.length>0)
+                this.domElement.id = proc.id;
+            if(proc.classes.length>0)
+                this.domElement.className = proc.classes.trim();
 
-    /**
-     * Function to trigger a change listener
-     * @private
-     *
-     * @param {string} path path identifier
-     * @param {Object} value change value
-     * @returns {TemplateElement} this
-     */
-    TemplateElement.prototype.trigger = function(path, value) {
-        if(this.listeners.hasOwnProperty(path)) {
-            for(var i = 0; i < this.listeners[path].length; ++i) {
-                this.listeners[path][i](value);
+            for(var name in proc.attrs) {
+                this.setAttribute(name, proc.attrs[name]);   
             }
-        }
-        return this;
-    };
 
-    /**
-     * Function to render the template with a static object
-     *
-     * @param {Object} data data object
-     * @returns {TemplateElement} this
-     */
-    TemplateElement.prototype.render = function(data) {
-        for(var path in this.listeners) {
-            if(objHasVar(data, path))
-                this.trigger(path, objGetVar(data, path));
-        }
-        return this;
-    };
-
-    /**
-     * Function to subscribe the template to a living object
-     *
-     * @param {Object} data living data object
-     * @returns {TemplateElement} this
-     */
-    TemplateElement.prototype.subscribe = function(data) {
-        var parent, obj, i, bool, tmp;
-        if(this.subscription) {
-            for(var n in this.listeners) {
-                tmp = n.split(".");
-                parent = this.subscription;
-                obj = this.subscription;
-                for(i = 0; i < tmp.length; ++i) {
-                    if(obj.hasOwnProperty(tmp[i])) {
-                        parent = obj;
-                        bool = true;
-                        obj = obj[tmp[i]];
-                    } else {
-                        bool = false;
-                        break;
-                    }
-                }
-                if(!bool)
-                    continue;
-
-                parent.unwatch(tmp[tmp.length-1]);
+            for(name in proc.styles) {
+                this.setStyle(name, proc.styles[name]);   
             }
         }
 
-        this.subscription = data;
-
-        if(this.subscription) {
-            for(var name in this.listeners) {
-                tmp = name.split(".");
-                parent = this.subscription;
-                obj = this.subscription;
-                for(i = 0; i < tmp.length; ++i) {
-                    if(obj.hasOwnProperty(tmp[i])) {
-                        parent = obj;
-                        bool = true;
-                        obj = obj[tmp[i]];
-                    } else {
-                        bool = false;
-                        break;
-                    }
-                }
-                if(!bool)
-                    continue;
-
-                (function(el) {
-                    var t1 = tmp[tmp.length-1],
-                        t2 = name;
-                    parent.watch(t1, function(n, oldVal, newVal) {
-                        this.trigger(t2, newVal);
-                        return newVal;
-                    }.bind(el));
-                })(this);
-            }
-
-            this.render(this.subscription);
+        if(typeof proc.contents !== "undefined") {
+            this.textNode = $createText("");
+            this.setContent(proc.contents);
+            this.domElement.appendChild(this.textNode);
         }
-        return this;
+
+        if(typeof proc.childs !== "undefined")
+            for(var i = 0; i < proc.childs.length; ++i)
+                this.domElement.appendChild(proc.childs[i].build().get());
     };
 
-    /**
-     * Function to unsubscribe the template
-     *
-     * @returns {TemplateElement} this
-     */
-    TemplateElement.prototype.unsubscribe = function() {
-        return this.subscribe(false);
+    TemplateElement.prototype = {
+        get: function() {
+            return this.domElement;
+        },
+
+        setContent: function(str) {
+            this.contents = str;
+            this.textNode.textContent = str.replace($contentPre, "").replace($contentClose, "");
+        },
+
+        setAttribute: function(name, value) {
+            this.domElement.setAttribute(name, value);
+        },
+
+        /**
+         * Function to set styles to an element
+         * @private
+         *
+         * @param {Element} elm element
+         * @param {string} name style name
+         * @param {string} value value of the style rule
+         */
+        setStyle: function(name, value) {
+            name = name.split("-");
+            for(var i = 0; i < name.length; ++i) {
+                if(i!==0)
+                    name[i] = name[i].slice(0,1).toUpperCase()+name[i].slice(1);
+            }
+
+            this.domElement.style[name.join("")] = value;            
+        }
     };

@@ -4,5 +4,5 @@
     } else {
         global.Maelstrom = factory();
     }
-})(this,function() {
+})(this, function() {
 "use strict";

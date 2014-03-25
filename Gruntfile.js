@@ -2,13 +2,14 @@ module.exports = function(grunt) {
     var srcFiles = [                    
             "src/amdSupport.js",
             "src/polyfill.js",
-            "src/dom.js",
             "src/helper.js",
+            "src/dom.js",
             "src/buildStructure.js",
-            "src/Maelstrom.js",
+            "src/logic/TemplateProcessor.js",
+            //"src/logic/EachProcessor.js",
             "src/Template.js",
             "src/TemplateElement.js",
-            "src/TemplateFragment.js"
+            "src/Maelstrom.js"
         ],
         devFile = "dist/Maelstrom.dev.js",
         minFile = "dist/Maelstrom.min.js";

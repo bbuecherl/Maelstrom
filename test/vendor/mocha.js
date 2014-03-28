@@ -722,6 +722,7 @@ Progress.prototype.draw = function(ctx){
     var text = this._text || (percent | 0) + '%'
       , w = ctx.measureText(text).width;
   
+    ctx.fillStyle = '#FFF';
     ctx.fillText(
         text
       , x - w / 2 + 1

@@ -8,12 +8,12 @@
     var Template = function(str) {
         var arr = [],
             off = [],
-            lines = str.split("\n"), 
+            lines = str.split("\n"),
             i = 0,
             len = lines.length,
             count = 0,
             comment = -1;
-            
+
         for(;i<len;++i) {
             count = countLeadingSpace(lines[i]);
             if(lines[i].startsWith("//", count)) {
@@ -49,7 +49,7 @@
                 this.frag = $createFragment();
 
                 for(var i = 0, len = this.childs.length; i < len; ++i)
-                    this.frag.appendChild(this.childs[i].build().get());
+                    this.frag.appendChild(this.childs[i].build());
             }
 
             if(this.childs.length>0)
@@ -145,6 +145,8 @@
                     tmp = n.split(".");
                     parent = this.subscription;
                     obj = this.subscription;
+
+                    //TODO: optimization?
                     for(i = 0; i < tmp.length; ++i) {
                         if(obj.hasOwnProperty(tmp[i])) {
                             parent = obj;
@@ -165,10 +167,20 @@
             this.subscription = data;
 
             if(this.subscription) {
+                var subscribeProperty = function(that, prop, name, base) {
+                    parent.watch(prop, function(n, o, value) {
+                        this.trigger(name, value);
+                        return value;
+                    }.bind(that));
+                    that.trigger.apply(that, [name, base]);
+                };
+
                 for(var name in this.listeners) {
                     tmp = name.split(".");
                     parent = this.subscription;
                     obj = this.subscription;
+
+                    //TODO: optimization?
                     for(i = 0; i < tmp.length; ++i) {
                         if(obj.hasOwnProperty(tmp[i])) {
                             parent = obj;
@@ -182,17 +194,7 @@
                     if(!bool)
                         continue;
 
-                    (function(el) {
-                        var t1 = tmp[tmp.length-1],
-                            t2 = name;
-
-                        parent.watch(t1, function(n, oldVal, newVal) {
-                            this.trigger(t2, newVal);
-                            return newVal;
-                        }.bind(el));
-
-                        el.trigger.apply(el, [t2, parent[t1]]);
-                    })(this);
+                    subscribeProperty(this, tmp[tmp.length-1], name, parent[tmp[tmp.length-1]]);
                 }
             }
             return this;

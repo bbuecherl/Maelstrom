@@ -3,8 +3,8 @@
     <head>
         <title>Maelstrom</title>
         <style>
-            body { 
-                margin: 0; 
+            body {
+                margin: 0;
             }
             #loader {
                 width: 100%;
@@ -42,7 +42,6 @@
         <h1>Maelstrom</h1>
         <h4>Simple, fast and live updating templating engine for client-side javascript</h4>
         <h3>Example:</h3>
-        <pre style="background: #DDD; padding: 5px;"><code id="test">
     div#loader
         div#loader-bottom
             div#loader-bar
@@ -68,6 +67,7 @@
     else
         p this paragraph should be always hidden.
 
+        <pre style="background: #DDD; padding: 5px; overflow: auto;"><code id="test">
     ul
         each i in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
             li [[$i]] [[$loader.info]]
@@ -78,10 +78,11 @@
         <script src="src/helper.js" type="text/Javascript"></script>
         <script src="src/dom.js" type="text/Javascript"></script>
         <script src="src/buildStructure.js" type="text/Javascript"></script>
-        <script src="src/logic/TemplateProcessor.js" type="text/Javascript"></script>
-        <script src="src/logic/EachProcessor.js" type="text/Javascript"></script>
+        <script src="src/template/TemplateProcessor.js" type="text/Javascript"></script>
+        <script src="src/template/TemplateElement.js" type="text/Javascript"></script>
+        <script src="src/each/EachProcessor.js" type="text/Javascript"></script>
+        <script src="src/each/EachElement.js" type="text/Javascript"></script>
         <script src="src/Template.js" type="text/Javascript"></script>
-        <script src="src/TemplateElement.js" type="text/Javascript"></script>
         <script src="src/Maelstrom.js" type="text/Javascript"></script>
         <script type="text/Javascript">
             var obj = {
@@ -89,11 +90,12 @@
                     prog: "1%",
                     info: "Testing...",
                 },
-                variable: "Variable"
+                variable: "Variable",
+                arr: [1,2,3,4,5]
             };
 
             console.time("compile");
-            
+
             var tmpl = Maelstrom.compile(document.getElementById("test").innerHTML, obj);
             tmpl.append(document.getElementById("out"));
 
@@ -103,7 +105,16 @@
                 obj.loader.prog = ((parseInt(obj.loader.prog)+1)%101)+"%";
                 obj.variable = Math.random();
             },100);
+
+            var rerender = function(len) {
+                for(var i = 0; i < len; ++i) {
+                    obj.arr[i] = i+1;
+                }
+            };
+
             console.log(tmpl);
+            console.log(tmpl.childs[0].childs[0]);
+            console.log(tmpl.childs[0].childs[0].derived[0]);
         </script>
     </body>
 </html>

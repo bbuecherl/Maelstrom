@@ -8,8 +8,8 @@ var staticId = function() {
         test = sinon.match(function(value) {
             return (value.childNodes[0].id == "testid");
         });
-        sinon.assert.calledWith(blob.appendChild, test);
-        sinon.assert.calledOnce(blob.appendChild);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 
     it("should add an id to a default element", function() {
@@ -21,8 +21,8 @@ var staticId = function() {
         test = sinon.match(function(value) {
             return (value.childNodes[0].id == "testid");
         });
-        sinon.assert.calledWith(blob.appendChild, test);
-        sinon.assert.calledOnce(blob.appendChild);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 
     it("should add only the last id", function() {
@@ -34,8 +34,8 @@ var staticId = function() {
         test = sinon.match(function(value) {
             return (value.childNodes[0].id == "lastid");
         });
-        sinon.assert.calledWith(blob.appendChild, test);
-        sinon.assert.calledOnce(blob.appendChild);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 
     it("should be no id by default ", function() {
@@ -47,7 +47,7 @@ var staticId = function() {
         test = sinon.match(function(value) {
             return typeof value.childNodes[0].id === "undefined" || value.childNodes[0].id.length === 0;
         });
-        sinon.assert.calledWith(blob.appendChild, test);
-        sinon.assert.calledOnce(blob.appendChild);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 };

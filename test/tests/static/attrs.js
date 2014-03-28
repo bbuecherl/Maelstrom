@@ -9,7 +9,8 @@ var staticAttrs = function() {
             return (value.childNodes.length===1 && value.childNodes[0].value=="test"
                 && value.childNodes[0].getAttribute("value") == "test");
         }, "test");
-        sinon.assert.calledWith(blob.appendChild, test);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 
     it("should add multiple attributes", function() {
@@ -24,7 +25,8 @@ var staticAttrs = function() {
                 && value.childNodes[0].getAttribute("placeholder")=="testing"
                 && value.childNodes[0].getAttribute("width")=="3000");
         }, "test");
-        sinon.assert.calledWith(blob.appendChild, test);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 
     it("should render static placeholders inside attributes", function() {
@@ -37,9 +39,9 @@ var staticAttrs = function() {
         test = sinon.match(function(value) {
             return (value.childNodes.length===1 && value.childNodes[0].value == "hello, world!");
         }, "test");
-        sinon.assert.calledWith(blob.appendChild, test);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
-
 
     it("should append static placeholders inside attributes after rendering", function() {
         tmplStr = "input(value=\"hello, [[$test]]!\")";
@@ -51,6 +53,7 @@ var staticAttrs = function() {
         test = sinon.match(function(value) {
             return (value.childNodes.length===1 && value.childNodes[0].value == "hello, world!");
         }, "test");
-        sinon.assert.calledWith(blob.appendChild, test);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 };

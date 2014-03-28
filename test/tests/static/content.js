@@ -8,7 +8,8 @@ var staticContent = function() {
         test = sinon.match(function(value) {
             return (value.childNodes.length===1 && value.childNodes[0].childNodes[0].textContent == "with test content");
         }, "test");
-        sinon.assert.calledWith(blob.appendChild, test);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 
     it("should add multiline content to an element", function() {
@@ -23,7 +24,8 @@ var staticContent = function() {
                 && value.childNodes[0].childNodes[0].textContent == "with test content"
                 && value.childNodes[0].childNodes[1].textContent == "and multiple lines");
         }, "test");
-        sinon.assert.calledWith(blob.appendChild, test);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 
     it("should render static placeholders inside content", function() {
@@ -37,6 +39,7 @@ var staticContent = function() {
             return (value.childNodes.length===1 && value.childNodes[0].childNodes.length===1  
                 && value.childNodes[0].childNodes[0].textContent == "hello, world!");
         }, "test");
-        sinon.assert.calledWith(blob.appendChild, test);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 };

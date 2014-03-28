@@ -4,7 +4,7 @@ var staticComments = function() {
         tmpl = Maelstrom.compile(tmplStr);
         tmpl.append(blob);
         expect(tmpl.childs.length).to.equal(0);
-        sinon.assert.notCalled(blob.appendChild);
+        expect(blob.appendChild).to.have.callCount(0);
     });
     
     it("should not render block commands", function() {
@@ -12,7 +12,7 @@ var staticComments = function() {
         tmpl = Maelstrom.compile(tmplStr);
         tmpl.append(blob);
         expect(tmpl.childs.length).to.equal(0);
-        sinon.assert.notCalled(blob.appendChild);
+        expect(blob.appendChild).to.have.callCount(0);
     });
     
     it("should not render empty lines", function() {
@@ -20,7 +20,6 @@ var staticComments = function() {
         tmpl = Maelstrom.compile(tmplStr);
         tmpl.append(blob);
         expect(tmpl.childs.length).to.equal(0);
-    
-        sinon.assert.notCalled(blob.appendChild);
+        expect(blob.appendChild).to.have.callCount(0);
     });
 };

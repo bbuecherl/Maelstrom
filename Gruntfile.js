@@ -1,14 +1,15 @@
 module.exports = function(grunt) {
-    var srcFiles = [                    
+    var srcFiles = [
             "src/amdSupport.js",
             "src/polyfill.js",
             "src/helper.js",
             "src/dom.js",
             "src/buildStructure.js",
-            "src/logic/TemplateProcessor.js",
-            //"src/logic/EachProcessor.js",
+            "src/template/TemplateProcessor.js",
+            "src/template/TemplateElement.js",
+            "src/each/EachProcessor.js",
+            "src/each/EachElement.js",
             "src/Template.js",
-            "src/TemplateElement.js",
             "src/Maelstrom.js"
         ],
         devFile = "dist/Maelstrom.dev.js",
@@ -24,7 +25,7 @@ module.exports = function(grunt) {
                     + " * Maelstrom v<%= pkg.version %>-<%= grunt.template.today('yymmddHHMM') %>\n"
                     + " * https://github.com/bbuecherl/Maelstrom/\n"
                     + " * by Bernhard Buecherl http://bbuecherl.de/\n"
-                    + " * License: MIT http://bbuecherl.mit-license.org/"
+                    + " * License: MIT http://bbuecherl.mit-license.org/\n"
                     + " */\n",
                 seperator: "\n",
                 footer: "\n    return Maelstrom;\n});\n"
@@ -34,14 +35,14 @@ module.exports = function(grunt) {
                 dest: devFile
             }
         },
-        
+
         uglify: {
             options: {
                 banner: "/**\n"
                     + " * Maelstrom v<%= pkg.version %>-<%= grunt.template.today('yymmddHHMM') %>\n"
                     + " * https://github.com/bbuecherl/Maelstrom/\n"
                     + " * by Bernhard Buecherl http://bbuecherl.de/\n"
-                    + " * License: MIT http://bbuecherl.mit-license.org/"
+                    + " * License: MIT http://bbuecherl.mit-license.org/\n"
                     + " */\n"
             },
             dist: {
@@ -55,9 +56,8 @@ module.exports = function(grunt) {
             src: srcFiles.slice(1), //exclude amdSupport.js
             options: {
                 force: true,
-                reporter: require("jshint-stylish"),
-                "-W083": true //function inside loops
-            }            
+                reporter: require("jshint-stylish")
+            }
         }
     });
 

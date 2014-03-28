@@ -1,8 +1,9 @@
 /**
- * Maelstrom v0.0.1-1403252001
+ * Maelstrom v0.0.1-1403282351
  * https://github.com/bbuecherl/Maelstrom/
  * by Bernhard Buecherl http://bbuecherl.de/
- * License: MIT http://bbuecherl.mit-license.org/ */
+ * License: MIT http://bbuecherl.mit-license.org/
+ */
 (function(global, factory) {
     if(typeof define === "function" && define.amd) {
         define(["Maelstrom"], factory);
@@ -97,7 +98,7 @@
          * @todo : replace the RegExp?
          *
          * @param {string} str template string
-         * @returns {Array} splitted array 
+         * @returns {Array} splitted array
          */
         splitByIdentifiers = function(str) {
             return str.split(/#|\.|\(|\{| /g); //replace RegExp?
@@ -149,7 +150,7 @@
          */
         objGetVar = function(obj, varName) {
             var path = varName.split(".");
-            for(var i = 0; i < path.length; ++i) { 
+            for(var i = 0; i < path.length; ++i) {
                 obj = obj[path[i]];
             }
             return obj;
@@ -185,7 +186,7 @@
             for(i=0; i < list.length; ++i) {
                 if(list[i].length!==0) {
                     last = list[i].split("=");
-                    tmp = last[1].trim(); 
+                    tmp = last[1].trim();
                     ret[last[0].trim()] = tmp.slice(1,tmp.length-1);
                 }
             }
@@ -251,26 +252,40 @@
                 len = arguments.length;
 
             for(; i<len; i++) {
+                if(typeof arguments[i] !== "object" || arguments[i]===null) continue;
                 for(var p in arguments[i]) {
                     if(arguments[i].hasOwnProperty(p) && !ret.hasOwnProperty(p)) {
                         ret[p] = arguments[i][p];
                     }
                 }
             }
-            return ret;            
+            return ret;
         },
 
         /**
          * Function to (throw and) trace an error
          * @private
          *
-         * @param {string} str error text 
+         * @param {string} str error text
          */
         err = function(str) {
             if(console && console.error)
                 console.error(str);
             else
                 throw new Error(str);
+        },
+
+        /**
+         * Exception constructor
+         * @constructor
+         * @private
+         *
+         * @param {string} name exception type name
+         * @param {string} message exception message
+         */
+        Exception = function(name, message) {
+            this.name = name;
+            this.message = message;
         };
 
     var $doc = document,
@@ -292,21 +307,20 @@
          * @param {Number} oldO parent line offset
          * @param {TemplateProcessor|Template} parent parent fragment
          * @param {Template} root root template
-         * @param {Array} predefined predefined logic variables
          * @param {Object} data template data for child elements
          * @param {Object} tmp a temporary placeholder
          * @param {Number} isIf for if-else identification
          * @returns {Array} array of child elements
          */
-    var buildFragment = function(ret, old, oldO, parent, root, predefined, data, tmp, isIf) {
+    var buildFragment = function(ret, old, oldO, parent, root, data, tmp, isIf) {
             if(old.startsWith("each")) {
-                //ret.push(new EachProcessor(old.slice(4), data, parent, root, predefined));
+                ret.push(new EachProcessor(old.slice(4), data, parent, root));
             } else if(old.startsWith("if")) {
 
             } else if(old.startsWith("else")) {
 
             } else {
-                ret.push(new TemplateProcessor(old, data, parent, root, predefined));
+                ret.push(new TemplateProcessor(old, data, parent, root));
             }
             return ret;
         },
@@ -317,10 +331,9 @@
          * @param {TemplateProcessor|Template} parent parent fragment
          * @param {Template} root root template
          * @param {Object} data template data for child elements
-         * @param {Array} predefined predefined logic variables
          * @returns {Array} array of child elements
          */
-        buildStructure = function(parent, root, data, predefined) {
+        buildStructure = function(parent, root, data) {
             var min = data.o.min(),
                 tmpL = [],
                 tmpO = [],
@@ -332,7 +345,7 @@
             for(var i = 0; i < data.l.length; ++i) {
                 if(min==data.o[i]) {
                     if(i!==old) {
-                        buildFragment(ret, data.l[old], data.o[old], parent, root, predefined, {l: tmpL, o: tmpO}, tmp, isIf);
+                        buildFragment(ret, data.l[old], data.o[old], parent, root, {l: tmpL, o: tmpO}, tmp, isIf);
                         tmpL = [];
                         tmpO = [];
                         old = i;
@@ -342,7 +355,7 @@
                     tmpO.push(data.o[i]);
                 }
             }
-            return buildFragment(ret, data.l[old], data.o[old], parent, root, predefined, {l: tmpL, o: tmpO}, tmp, isIf);
+            return buildFragment(ret, data.l[old], data.o[old], parent, root, {l: tmpL, o: tmpO}, tmp, isIf);
         };
 
     /**
@@ -356,10 +369,8 @@
      * @param {Template} root root template
      * @param {Array} predefined predefined logic variables
      */
-    var TemplateProcessor = function(line, data, parent, root, predefined) {
+    var TemplateProcessor = function(line, data, parent, root) {
         this.line = line;
-        this.predefined = predefined || {};
-        this.defined = [];
 
         this.root = root;
         this.parent = parent;
@@ -374,6 +385,7 @@
             // build structure
             if(data.l.length>0)
                 this.childs = buildStructure(this,root,data);
+            next="";
         // TextNode
         } else if(this.line.startsWith("|")) {
             this.node = "|";
@@ -434,18 +446,6 @@
                             link: name,
                             inside: list[name]
                         });
-
-                        if(this.predefined.hasOwnProperty(tmp)) { //TODO
-                            (function(ref) {
-                                var t1 = tmp,
-                                    t2 = name,
-                                    t3 = list[name];
-
-                                ref.predefined.watch(t1, function(id, oldVal, value) {
-                                    //ref.domElement.setAttribute(t2, t3.replace($varPre + t1 + $varClose, value));
-                                });
-                            })(this);
-                        }
                     } else {
                        this.attrs[name] = list[name];
                     }
@@ -473,22 +473,10 @@
                             link: n,
                             inside: list[n]
                         });
-
-                        if(this.predefined.hasOwnProperty(tmp)) { //TODO
-                            (function(ref) {
-                                var t1 = tmp,
-                                    t2 = n,
-                                    t3 = list[n];
-
-                                ref.predefined.watch(t1, function(id, oldVal, value) {
-                                    //setStyle(ref.domElement, t2, t3.replace($varPre + t1 + $varClose, value));
-                                });
-                            })(this);
-                        }
                     } else {
                         this.styles[n] = list[n];
                     }
-                }               
+                }
             }
         }
 
@@ -499,7 +487,7 @@
             var index = 0;
 
             this.contents = "";
-    
+
             while((elm = splitFirst(next, $varPre))) {
                 this.contents += elm[0];
                 elm = splitFirst(elm[1], $varClose);
@@ -508,21 +496,8 @@
                     type: TemplateProcessor.VType.CONTENT,
                     inside: index++
                 });
-
-                if(this.predefined.hasOwnProperty(elm[0])) { // TODO
-                    this.contents += $contentPre + this.predefined[elm[0]] + $contentClose;
-
-                    (function(ref) {
-                        var t2 = elm[0];
-
-                        ref.predefined.watch(t2, function(id, oldVal, value) {
-                            ref.render(t2, value);
-                            return value;
-                        }.bind(ref));
-                    })(this);
-                } else {
-                    this.contents += $contentPre + $varPre + elm[0] + $varClose + $contentClose;
-                }
+                //TODO maybe exclude uninitialized values?
+                this.contents += $contentPre + $varPre + elm[0] + $varClose + $contentClose;
 
                 next = elm[1];
             }
@@ -548,32 +523,31 @@
                 //todo : render with predefined values
             } else {
                 if(this.vars.hasOwnProperty(name)) {
-                    var tmp = this.vars[name];
+                    for(var i = 0, j, tmp = this.vars[name], link; i < tmp.length; ++i) {
+                        link = tmp[i].link;
 
-                    for(var i = 0, j; i < tmp.length; ++i) {
-                        
                         if(tmp[i].type == TemplateProcessor.VType.ATTRIBUTE) {
-                            this.attrs[tmp[i].link] = tmp[i].inside.replace($varPre + name + $varClose, value);
+                            this.attrs[link] = tmp[i].inside.replace($varPre + name + $varClose, value);
 
-                            for(j = 0; j < this.derived.length; ++j) 
-                                this.derived[j].setAttribute(tmp[i].link, this.attrs[tmp[i].link]);
+                            for(j = 0; j < this.derived.length; ++j)
+                                this.derived[j].setAttribute(link, this.attrs[link]);
 
 
                         } else if(tmp[i].type == TemplateProcessor.VType.STYLE) {
-                            this.styles[tmp[i].link] = tmp[i].inside.replace($varPre + name + $varClose, value);
+                            this.styles[link] = tmp[i].inside.replace($varPre + name + $varClose, value);
 
-                            for(j = 0; j < this.derived.length; ++j) 
-                                this.derived[j].setStyle(tmp[i].link, this.styles[tmp[i].link]);
+                            for(j = 0; j < this.derived.length; ++j)
+                                this.derived[j].setStyle(link, this.styles[link]);
 
                         } else if(tmp[i].type == TemplateProcessor.VType.CONTENT) {
 
                             var t = this.contents,
                                 rep = $contentPre + t.split($contentPre)[tmp[i].inside+1]
-                                                    .split($contentClose)[0] + $contentClose;
+                                    .split($contentClose)[0] + $contentClose;
 
                             this.contents = t.replace(rep, $contentPre + value + $contentClose);
 
-                            for(j = 0; j < this.derived.length; ++j) 
+                            for(j = 0; j < this.derived.length; ++j)
                                 this.derived[j].setContent(t.replace(rep, $contentPre + value + $contentClose));
                         }
                     }
@@ -587,10 +561,10 @@
          *
          * @returns {TemplateElement} derived element
          */
-        build: function() {
-            var tmp = new TemplateElement(this);
+        build: function(defined) {
+            var tmp = new TemplateElement(this, defined);
             this.derived.push(tmp);
-            return tmp;
+            return tmp.get();
         }
     };
 
@@ -610,6 +584,307 @@
     };
 
     /**
+     * Template element constructor
+     * @constructor
+     * @private
+     *
+     * @param {TemplateProcessor} proc template processor to be build on
+     * @param {Object} defined predefined internal variables
+     */
+    var TemplateElement = function(proc, defined) {
+        this.processor = proc;
+
+        if(proc.node=="|"||proc.node=="logic") {
+            this.domElement = $createFragment();
+        } else {
+            this.domElement = $createElement(proc.node);
+
+            if(proc.id.length>0)
+                this.domElement.id = proc.id;
+            if(proc.classes.length>0)
+                this.domElement.className = proc.classes.trim();
+
+            for(var name in proc.attrs) {
+                this.setAttribute(name, proc.attrs[name]);
+            }
+
+            for(name in proc.styles) {
+                this.setStyle(name, proc.styles[name]);
+            }
+        }
+
+        if(typeof proc.contents !== "undefined") {
+            this.textNode = $createText("");
+            this.setContent(proc.contents);
+            this.domElement.appendChild(this.textNode);
+        }
+
+        this.redefine(defined);
+
+        if(typeof proc.childs !== "undefined")
+            for(var i = 0; i < proc.childs.length; ++i)
+                this.domElement.appendChild(proc.childs[i].build(defined));
+    };
+
+    TemplateElement.prototype = {
+        /**
+         * Function to redefine internal variables
+         * @private
+         *
+         * @param {Object} defined internal variables
+         */
+        redefine: function(defined) {
+            this.defined = concatObject(defined, this.defined);
+            var value, i, tmp, link;
+            for(var name in defined) {
+                if(this.processor.vars.hasOwnProperty(name)) {
+                    value = defined[name];
+                    for(i = 0,tmp = this.processor.vars[name]; i < tmp.length; ++i) {
+                        link = tmp[i].link;
+
+                        if(tmp[i].type == TemplateProcessor.VType.ATTRIBUTE) {
+                            this.setAttribute(link, tmp[i].inside.replace($varPre + name + $varClose, value));
+                        } else if(tmp[i].type == TemplateProcessor.VType.STYLE) {
+                            this.setStyle(link, tmp[i].inside.replace($varPre + name + $varClose, value));
+                        } else if(tmp[i].type == TemplateProcessor.VType.CONTENT) {
+                            var t = this.contents,
+                                rep = $contentPre + t.split($contentPre)[tmp[i].inside+1]
+                                    .split($contentClose)[0] + $contentClose;
+                            this.setContent(t.replace(rep, $contentPre + value + $contentClose));
+                        }
+                    }
+                }
+            }
+        },
+
+        /**
+         * Getter for the DOM element
+         * @private
+         *
+         * @returns {Node} DOM node
+         */
+        get: function() {
+            return this.domElement;
+        },
+
+        /**
+         * Function to set the text content of this element
+         * @private
+         *
+         * @param {string} str new text content
+         */
+        setContent: function(str) {
+            this.contents = str;
+            this.textNode.textContent = str.replace($contentPre, "").replace($contentClose, "");
+        },
+
+        /**
+         * Function to set attributes on this element
+         * @private
+         *
+         * @param {string} name attribute name
+         * @param {string} value value of the attribute
+         */
+        setAttribute: function(name, value) {
+            this.domElement.setAttribute(name, value);
+        },
+
+        /**
+         * Function to set styles on this element
+         * @private
+         *
+         * @param {string} name style name
+         * @param {string} value value of the style rule
+         */
+        setStyle: function(name, value) {
+            name = name.split("-");
+            for(var i = 0; i < name.length; ++i) {
+                if(i!==0)
+                    name[i] = name[i].slice(0,1).toUpperCase()+name[i].slice(1);
+            }
+
+            this.domElement.style[name.join("")] = value;
+        }
+    };
+
+    /**
+     * Each-logic processor constructor
+     * @constructor
+     * @private
+     *
+     * @param {string} line template line
+     * @param {Object} data template data of child elements
+     * @param {TemplateProcessor|Template} parent parent fragment
+     * @param {Template} root root template
+     */
+    var EachProcessor = function(line, data, parent, root) {
+        var arr = splitFirst(line, " in "),
+            tmp,
+            obj;
+
+        this.root = root;
+        this.data = data;
+        this.derived = [];
+        this.childs = [];
+
+        this.valueIterator = null;
+        this.indexIterator = null;
+
+        this.data.l.unshift("logic ");
+        this.data.o.unshift(0);
+
+        this.childProcessor = buildStructure(this, this.root, this.data)[0];
+
+        if(arr[0].contains(",")) {
+            tmp = arr[0].split(",");
+            this.valueIterator = tmp[0].trim();
+            this.indexIterator = tmp[1].trim();
+        } else {
+            this.valueIterator = arr[0].trim();
+        }
+
+
+        // live logic!
+        if(arr[1].contains($varPre)) {
+            this.logic = arr[1].split($varPre)[1].split($varClose)[0];
+
+            root.on(this.logic, function(name, value) {
+                if(typeof value === "string")
+                    this.obj = JSON.parse(value);
+                else
+                    this.obj = value;
+
+                this.render();
+            }.bind(this));
+        // simple static logic calculation
+        } else {
+            this.obj = JSON.parse(arr[1].trim());
+
+            this.render();
+        }
+    };
+
+    EachProcessor.prototype = {
+        /**
+         * Function to build a derived element
+         * @private
+         *
+         * @returns {EachElement} derived element
+         */
+        build: function(defined) {
+            var tmp = new EachElement(this, defined);
+            for(var i = 0; i < this.obj.length; ++i)
+                tmp.addChild(this.childs[i]);
+
+            this.derived.push(tmp);
+            return tmp.get();
+        },
+
+        render: function() {
+            if(isArray(this.obj)) {
+                for(var i = 0, j; i < this.obj.length; ++i) {
+                    if(this.childs.length == i)
+                        this.childs[i] = {};
+
+                    if(this.indexIterator !== null)
+                        this.childs[i][this.indexIterator] = i;
+                    this.childs[i][this.valueIterator] = this.obj[i];
+                    for(j = 0; j < this.derived.length; ++j) {
+                        if(this.derived[j].renderCount<=i)
+                            this.derived[j].addChild(this.childs[i]);
+                        else
+                            this.derived[j].redefineChild(i, this.childs[i]);
+                    }
+                }
+            } else if(typeof this.obj === "object" && this.obj !== null) {
+                /* TODO for(var p in this.obj) {
+                    if(this.indexIterator !== null) {
+                        this.defined[this.indexIterator] = p;
+                    }
+                    this.defined[this.valueIterator] = this.obj[p];
+
+                    this.childs = this.childs.concat(buildStructure(this, this.root, this.data));
+                }*/
+            //isFinite makes sure its not Infinite or NaN.
+            } else if(typeof this.obj === "number" && isFinite(this.obj)) {
+                var tmp = parseInt(this.obj,10);
+                //TODO
+            } else {
+                throw new Exception("TypeError", "EachProcessor can iterate over arrays, objects and numbers only");
+            }
+            //for(var j = 0; j < this.childs.length; ++j)
+            //    this.domElement.appendChild(this.childs[j].domElement);
+        }
+    };
+
+    /**
+     * Each element constructor
+     * @constructor
+     * @private
+     *
+     * @param {EachProcessor} proc each processor to be build on
+     * @param {Object} defined predefined internal variables
+     */
+    var EachElement = function(proc, defined) {
+        this.childs = [];
+        this.childProcessor = proc.childProcessor;
+        this.renderCount = 0;
+        this.domElement = $createFragment();
+        this.redefine(defined);
+    };
+
+    EachElement.prototype = {
+        /**
+         * Function to redefine internal variables
+         * @private
+         *
+         * @param {Object} defined internal variables
+         */
+        redefine: function(defined) {
+            this.defined = concatObject(defined, this.defined);
+        },
+
+        /**
+         * Getter for the DOM element
+         * @private
+         *
+         * @returns {Node} DOM node
+         */
+        get: function() {
+            return this.domElement;
+        },
+
+        /**
+         * Function to add a new child to the element
+         * @private
+         */
+        addChild: function(defined) {
+            ++this.renderCount;
+            if(this.childs.length<this.renderCount)
+                this.childs.push(this.childProcessor.build(defined));
+            else
+                this.childs[this.renderCount-1].redefine(defined);
+
+            this.domElement.appendChild(this.childs[this.renderCount-1]);
+        },
+
+        redefineChild: function(id, defined) {
+            if(id<this.renderCount)
+                this.childs[id].redefine(defined);
+        },
+
+        /**
+         * Function to remove a child from the element
+         * @private
+         */
+        removeChild: function() {
+            if(this.renderCount===0) return;
+            --this.renderCount;
+            this.domElement.removeChild(this.childs[this.renderCount].get());
+        }
+    };
+
+    /**
      * Template constructor
      * @constructor
      * @private
@@ -619,12 +894,12 @@
     var Template = function(str) {
         var arr = [],
             off = [],
-            lines = str.split("\n"), 
+            lines = str.split("\n"),
             i = 0,
             len = lines.length,
             count = 0,
             comment = -1;
-            
+
         for(;i<len;++i) {
             count = countLeadingSpace(lines[i]);
             if(lines[i].startsWith("//", count)) {
@@ -660,7 +935,7 @@
                 this.frag = $createFragment();
 
                 for(var i = 0, len = this.childs.length; i < len; ++i)
-                    this.frag.appendChild(this.childs[i].build().get());
+                    this.frag.appendChild(this.childs[i].build());
             }
 
             if(this.childs.length>0)
@@ -756,6 +1031,8 @@
                     tmp = n.split(".");
                     parent = this.subscription;
                     obj = this.subscription;
+
+                    //TODO: optimization?
                     for(i = 0; i < tmp.length; ++i) {
                         if(obj.hasOwnProperty(tmp[i])) {
                             parent = obj;
@@ -776,10 +1053,20 @@
             this.subscription = data;
 
             if(this.subscription) {
+                var subscribeProperty = function(that, prop, name, base) {
+                    parent.watch(prop, function(n, o, value) {
+                        this.trigger(name, value);
+                        return value;
+                    }.bind(that));
+                    that.trigger.apply(that, [name, base]);
+                };
+
                 for(var name in this.listeners) {
                     tmp = name.split(".");
                     parent = this.subscription;
                     obj = this.subscription;
+
+                    //TODO: optimization?
                     for(i = 0; i < tmp.length; ++i) {
                         if(obj.hasOwnProperty(tmp[i])) {
                             parent = obj;
@@ -793,17 +1080,7 @@
                     if(!bool)
                         continue;
 
-                    (function(el) {
-                        var t1 = tmp[tmp.length-1],
-                            t2 = name;
-
-                        parent.watch(t1, function(n, oldVal, newVal) {
-                            this.trigger(t2, newVal);
-                            return newVal;
-                        }.bind(el));
-
-                        el.trigger.apply(el, [t2, parent[t1]]);
-                    })(this);
+                    subscribeProperty(this, tmp[tmp.length-1], name, parent[tmp[tmp.length-1]]);
                 }
             }
             return this;
@@ -816,77 +1093,6 @@
          */
         unsubscribe: function() {
             return this.subscribe(false);
-        }
-    };
-
-    /**
-     * Template element constructor
-     * @constructor
-     * @private
-     *
-     * @param {TemplateProcessor} proc template processor to be build on
-     */
-    var TemplateElement = function(proc) {
-        if(proc.node=="|"||proc.node=="logic") {
-            this.domElement = $createFragment();
-        } else {
-            this.domElement = $createElement(proc.node);
-
-            if(proc.id.length>0)
-                this.domElement.id = proc.id;
-            if(proc.classes.length>0)
-                this.domElement.className = proc.classes.trim();
-
-            for(var name in proc.attrs) {
-                this.setAttribute(name, proc.attrs[name]);   
-            }
-
-            for(name in proc.styles) {
-                this.setStyle(name, proc.styles[name]);   
-            }
-        }
-
-        if(typeof proc.contents !== "undefined") {
-            this.textNode = $createText("");
-            this.setContent(proc.contents);
-            this.domElement.appendChild(this.textNode);
-        }
-
-        if(typeof proc.childs !== "undefined")
-            for(var i = 0; i < proc.childs.length; ++i)
-                this.domElement.appendChild(proc.childs[i].build().get());
-    };
-
-    TemplateElement.prototype = {
-        get: function() {
-            return this.domElement;
-        },
-
-        setContent: function(str) {
-            this.contents = str;
-            this.textNode.textContent = str.replace($contentPre, "").replace($contentClose, "");
-        },
-
-        setAttribute: function(name, value) {
-            this.domElement.setAttribute(name, value);
-        },
-
-        /**
-         * Function to set styles to an element
-         * @private
-         *
-         * @param {Element} elm element
-         * @param {string} name style name
-         * @param {string} value value of the style rule
-         */
-        setStyle: function(name, value) {
-            name = name.split("-");
-            for(var i = 0; i < name.length; ++i) {
-                if(i!==0)
-                    name[i] = name[i].slice(0,1).toUpperCase()+name[i].slice(1);
-            }
-
-            this.domElement.style[name.join("")] = value;            
         }
     };
 

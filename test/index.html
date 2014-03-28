@@ -5,7 +5,7 @@
         <link rel="stylesheet" media="all" href="vendor/mocha.css" />
         <style>
             hr {border: none; border-top: 1px solid #365;}
-            #mocha {max-width: 800px; margin: 40px auto;}
+            #mocha {max-width: 800px; margin: 0 auto; padding: 60px 40px;}
             #mocha header {font-size: 14px; font-style: italic;}
             #mocha header a {color: #365;}
             #mocha header #title {font-size: 40px; text-decoration: none;}
@@ -13,7 +13,10 @@
             #mocha .test.pass.fast .duration {color: #333; display: inline;}
             #mocha .test pre.error {max-height: 150px;}
             #mocha .test a.replay {background: #365; color: #365; font-size: 1px;}
-            #mocha-stats {background: #FFF; top: 0; right: 0; padding: 8px 10px 6px 10px !important; border-bottom-left-radius: 7px; -webkit-box-shadow: 0px 1px 2px #365; color: #365;}
+            #mocha-stats {background: #365; top: 0; right: 0; left: 0; padding: 4px 20px !important; color: #ADC;}
+            #mocha-stats li {padding-top: 10px; float: right;}
+            #mocha-stats em {color: #FFF;}
+            #mocha-stats canvas {width: 32px; height: 32px; padding-top: 3px;}
         </style>
     </head>
     <body>
@@ -22,21 +25,24 @@
             <a href="." id="title">Maelstrom Development Test Suite</a><hr />
             Tests powered by <a href="http://visionmedia.github.io/mocha/" target="_blank">mocha</a>,
             <a href="http://chaijs.com" target="_blank">chai</a> and
-            <a href="http://sinonjs.org" target="_blank">sinon</a><hr />
+            <a href="http://sinonjs.org" target="_blank">sinon</a> using
+            <a href="https://github.com/domenic/sinon-chai" target="_blank">sinon-chai</a><hr />
         </header></div>
         <div id="blob"></div>
         <script src="vendor/mocha.js" type="text/Javascript"></script>
         <script src="vendor/chai.js" type="text/Javascript"></script>
         <script src="vendor/sinon.js" type="text/Javascript"></script>
+        <script src="vendor/sinon-chai.js" type="text/Javascript"></script>
 
         <script src="../src/polyfill.js" type="text/Javascript"></script>
         <script src="../src/helper.js" type="text/Javascript"></script>
         <script src="../src/dom.js" type="text/Javascript"></script>
         <script src="../src/buildStructure.js" type="text/Javascript"></script>
-        <script src="../src/logic/TemplateProcessor.js" type="text/Javascript"></script>
-        <script src="../src/logic/EachProcessor.js" type="text/Javascript"></script>
+        <script src="../src/template/TemplateProcessor.js" type="text/Javascript"></script>
+        <script src="../src/template/TemplateElement.js" type="text/Javascript"></script>
+        <script src="../src/each/EachProcessor.js" type="text/Javascript"></script>
+        <script src="../src/each/EachElement.js" type="text/Javascript"></script>
         <script src="../src/Template.js" type="text/Javascript"></script>
-        <script src="../src/TemplateElement.js" type="text/Javascript"></script>
         <script src="../src/Maelstrom.js" type="text/Javascript"></script>
        
         <script type="text/Javascript">

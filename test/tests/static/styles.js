@@ -8,7 +8,8 @@ var staticStyles = function() {
         test = sinon.match(function(value) {
             return (value.childNodes.length===1 && value.childNodes[0].style.width=="200px");
         }, "test");
-        sinon.assert.calledWith(blob.appendChild, test);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 
     it("should add multiple styles", function() {
@@ -21,7 +22,8 @@ var staticStyles = function() {
             return (value.childNodes.length===1 && value.childNodes[0].style.width == "200px"
                 && value.childNodes[0].style.height == "33px");
         }, "test");
-        sinon.assert.calledWith(blob.appendChild, test);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 
     it("should render static placeholders inside styles", function() {
@@ -34,7 +36,8 @@ var staticStyles = function() {
         test = sinon.match(function(value) {
             return (value.childNodes.length===1 && value.childNodes[0].style.width == "15px");
         }, "test");
-        sinon.assert.calledWith(blob.appendChild, test);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 
 
@@ -48,6 +51,7 @@ var staticStyles = function() {
         test = sinon.match(function(value) {
             return (value.childNodes.length===1 && value.childNodes[0].style.width == "15px");
         }, "test");
-        sinon.assert.calledWith(blob.appendChild, test);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 };

@@ -14,8 +14,8 @@ var dynamicRender = function() {
         setTimeout(function() {
             tmpl.render({width: "100", name: "testing", content: "dynamic content"});
 
-            sinon.assert.calledOnce(blob.appendChild);
-            sinon.assert.calledWith(blob.appendChild, test);
+            expect(blob.appendChild).to.have.been.calledWith(test);
+            expect(blob.appendChild).to.have.callCount(1);
             done();
         });
     });

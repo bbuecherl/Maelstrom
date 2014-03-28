@@ -8,8 +8,8 @@ var staticClass = function() {
         test = sinon.match(function(value) {
             return (value.childNodes[0].className == "test");
         });
-        sinon.assert.calledWith(blob.appendChild, test);
-        sinon.assert.calledOnce(blob.appendChild);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 
     it("should add a class to a default element", function() {
@@ -21,8 +21,8 @@ var staticClass = function() {
         test = sinon.match(function(value) {
             return (value.childNodes[0].className == "test");
         });
-        sinon.assert.calledWith(blob.appendChild, test);
-        sinon.assert.calledOnce(blob.appendChild);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 
     it("should add multiple class to an element", function() {
@@ -34,8 +34,8 @@ var staticClass = function() {
         test = sinon.match(function(value) {
             return (value.childNodes[0].className == "test classes are awesome");
         });
-        sinon.assert.calledWith(blob.appendChild, test);
-        sinon.assert.calledOnce(blob.appendChild);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 
     it("should be no class by default", function() {
@@ -47,7 +47,7 @@ var staticClass = function() {
         test = sinon.match(function(value) {
             return (typeof value.childNodes[0].className === "undefined" || value.childNodes[0].className.length === 0);
         });
-        sinon.assert.calledWith(blob.appendChild, test);
-        sinon.assert.calledOnce(blob.appendChild);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 };

@@ -19,7 +19,7 @@
          * @todo : replace the RegExp?
          *
          * @param {string} str template string
-         * @returns {Array} splitted array 
+         * @returns {Array} splitted array
          */
         splitByIdentifiers = function(str) {
             return str.split(/#|\.|\(|\{| /g); //replace RegExp?
@@ -71,7 +71,7 @@
          */
         objGetVar = function(obj, varName) {
             var path = varName.split(".");
-            for(var i = 0; i < path.length; ++i) { 
+            for(var i = 0; i < path.length; ++i) {
                 obj = obj[path[i]];
             }
             return obj;
@@ -107,7 +107,7 @@
             for(i=0; i < list.length; ++i) {
                 if(list[i].length!==0) {
                     last = list[i].split("=");
-                    tmp = last[1].trim(); 
+                    tmp = last[1].trim();
                     ret[last[0].trim()] = tmp.slice(1,tmp.length-1);
                 }
             }
@@ -173,24 +173,38 @@
                 len = arguments.length;
 
             for(; i<len; i++) {
+                if(typeof arguments[i] !== "object" || arguments[i]===null) continue;
                 for(var p in arguments[i]) {
                     if(arguments[i].hasOwnProperty(p) && !ret.hasOwnProperty(p)) {
                         ret[p] = arguments[i][p];
                     }
                 }
             }
-            return ret;            
+            return ret;
         },
 
         /**
          * Function to (throw and) trace an error
          * @private
          *
-         * @param {string} str error text 
+         * @param {string} str error text
          */
         err = function(str) {
             if(console && console.error)
                 console.error(str);
             else
                 throw new Error(str);
+        },
+
+        /**
+         * Exception constructor
+         * @constructor
+         * @private
+         *
+         * @param {string} name exception type name
+         * @param {string} message exception message
+         */
+        Exception = function(name, message) {
+            this.name = name;
+            this.message = message;
         };

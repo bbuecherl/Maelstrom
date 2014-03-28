@@ -9,10 +9,8 @@
      * @param {Template} root root template
      * @param {Array} predefined predefined logic variables
      */
-    var TemplateProcessor = function(line, data, parent, root, predefined) {
+    var TemplateProcessor = function(line, data, parent, root) {
         this.line = line;
-        this.predefined = predefined || {};
-        this.defined = [];
 
         this.root = root;
         this.parent = parent;
@@ -27,6 +25,7 @@
             // build structure
             if(data.l.length>0)
                 this.childs = buildStructure(this,root,data);
+            next="";
         // TextNode
         } else if(this.line.startsWith("|")) {
             this.node = "|";
@@ -87,18 +86,6 @@
                             link: name,
                             inside: list[name]
                         });
-
-                        if(this.predefined.hasOwnProperty(tmp)) { //TODO
-                            (function(ref) {
-                                var t1 = tmp,
-                                    t2 = name,
-                                    t3 = list[name];
-
-                                ref.predefined.watch(t1, function(id, oldVal, value) {
-                                    //ref.domElement.setAttribute(t2, t3.replace($varPre + t1 + $varClose, value));
-                                });
-                            })(this);
-                        }
                     } else {
                        this.attrs[name] = list[name];
                     }
@@ -126,22 +113,10 @@
                             link: n,
                             inside: list[n]
                         });
-
-                        if(this.predefined.hasOwnProperty(tmp)) { //TODO
-                            (function(ref) {
-                                var t1 = tmp,
-                                    t2 = n,
-                                    t3 = list[n];
-
-                                ref.predefined.watch(t1, function(id, oldVal, value) {
-                                    //setStyle(ref.domElement, t2, t3.replace($varPre + t1 + $varClose, value));
-                                });
-                            })(this);
-                        }
                     } else {
                         this.styles[n] = list[n];
                     }
-                }               
+                }
             }
         }
 
@@ -152,7 +127,7 @@
             var index = 0;
 
             this.contents = "";
-    
+
             while((elm = splitFirst(next, $varPre))) {
                 this.contents += elm[0];
                 elm = splitFirst(elm[1], $varClose);
@@ -161,21 +136,8 @@
                     type: TemplateProcessor.VType.CONTENT,
                     inside: index++
                 });
-
-                if(this.predefined.hasOwnProperty(elm[0])) { // TODO
-                    this.contents += $contentPre + this.predefined[elm[0]] + $contentClose;
-
-                    (function(ref) {
-                        var t2 = elm[0];
-
-                        ref.predefined.watch(t2, function(id, oldVal, value) {
-                            ref.render(t2, value);
-                            return value;
-                        }.bind(ref));
-                    })(this);
-                } else {
-                    this.contents += $contentPre + $varPre + elm[0] + $varClose + $contentClose;
-                }
+                //TODO maybe exclude uninitialized values?
+                this.contents += $contentPre + $varPre + elm[0] + $varClose + $contentClose;
 
                 next = elm[1];
             }
@@ -201,32 +163,31 @@
                 //todo : render with predefined values
             } else {
                 if(this.vars.hasOwnProperty(name)) {
-                    var tmp = this.vars[name];
+                    for(var i = 0, j, tmp = this.vars[name], link; i < tmp.length; ++i) {
+                        link = tmp[i].link;
 
-                    for(var i = 0, j; i < tmp.length; ++i) {
-                        
                         if(tmp[i].type == TemplateProcessor.VType.ATTRIBUTE) {
-                            this.attrs[tmp[i].link] = tmp[i].inside.replace($varPre + name + $varClose, value);
+                            this.attrs[link] = tmp[i].inside.replace($varPre + name + $varClose, value);
 
-                            for(j = 0; j < this.derived.length; ++j) 
-                                this.derived[j].setAttribute(tmp[i].link, this.attrs[tmp[i].link]);
+                            for(j = 0; j < this.derived.length; ++j)
+                                this.derived[j].setAttribute(link, this.attrs[link]);
 
 
                         } else if(tmp[i].type == TemplateProcessor.VType.STYLE) {
-                            this.styles[tmp[i].link] = tmp[i].inside.replace($varPre + name + $varClose, value);
+                            this.styles[link] = tmp[i].inside.replace($varPre + name + $varClose, value);
 
-                            for(j = 0; j < this.derived.length; ++j) 
-                                this.derived[j].setStyle(tmp[i].link, this.styles[tmp[i].link]);
+                            for(j = 0; j < this.derived.length; ++j)
+                                this.derived[j].setStyle(link, this.styles[link]);
 
                         } else if(tmp[i].type == TemplateProcessor.VType.CONTENT) {
 
                             var t = this.contents,
                                 rep = $contentPre + t.split($contentPre)[tmp[i].inside+1]
-                                                    .split($contentClose)[0] + $contentClose;
+                                    .split($contentClose)[0] + $contentClose;
 
                             this.contents = t.replace(rep, $contentPre + value + $contentClose);
 
-                            for(j = 0; j < this.derived.length; ++j) 
+                            for(j = 0; j < this.derived.length; ++j)
                                 this.derived[j].setContent(t.replace(rep, $contentPre + value + $contentClose));
                         }
                     }
@@ -240,10 +201,10 @@
          *
          * @returns {TemplateElement} derived element
          */
-        build: function() {
-            var tmp = new TemplateElement(this);
+        build: function(defined) {
+            var tmp = new TemplateElement(this, defined);
             this.derived.push(tmp);
-            return tmp;
+            return tmp.get();
         }
     };
 

@@ -1,19 +1,21 @@
 var staticHtml = function() {
-    it("should create all 110 html elements", function() {
+    it("should create all 110 html elements (note: testing is the performance leak!)", function() {
         tmp = $slashTags.concat($htmlTags);
+        var x = 0;
 
-        for(var i = 0; i < tmp.length; ++i) {
+        test = sinon.match(function(value) {
+            return (value.childNodes.length===1 && value.childNodes[0].nodeName==tmp[x].toUpperCase());
+        }, "test");
+
+        for(var i = 0; i < tmp.length; ++i, ++x) {
             tmplStr = tmp[i];
             tmpl = Maelstrom.compile(tmplStr);
             tmpl.append(blob);
 
             expect(tmpl.childs.length).to.equal(1);
-            test = sinon.match(function(value) {
-                return (value.childNodes.length===1 && value.childNodes[0].nodeName==tmp[i].toUpperCase());
-            }, "test");
-            sinon.assert.calledWith(blob.appendChild, test);
+            expect(blob.appendChild).to.have.been.calledWith(test);
         }
-        sinon.assert.callCount(blob.appendChild, tmp.length);
+        expect(blob.appendChild).to.have.callCount(tmp.length);
     });
 
     it("should create a \"DIV\" element by default", function() {
@@ -26,8 +28,8 @@ var staticHtml = function() {
         test = sinon.match(function(value) {
             return (value.childNodes.length===1 && value.childNodes[0].nodeName=="DIV");
         }, "test");
-        sinon.assert.calledWith(blob.appendChild, test);
-        sinon.assert.calledOnce(blob.appendChild, tmp.length);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 
     it("should create a 110 line template", function() {
@@ -48,7 +50,7 @@ var staticHtml = function() {
                 return false;
             }
         }, "test");
-        sinon.assert.calledWith(blob.appendChild, test);
-        sinon.assert.calledOnce(blob.appendChild, tmp.length);
+        expect(blob.appendChild).to.have.been.calledWith(test);
+        expect(blob.appendChild).to.have.callCount(1);
     });
 };

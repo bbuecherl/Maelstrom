@@ -16,8 +16,8 @@ var dynamicSubscribe = function() {
             obj.width = "100";
             obj.content = "dynamic content";
 
-            sinon.assert.calledOnce(blob.appendChild);
-            sinon.assert.calledWith(blob.appendChild, test);
+            expect(blob.appendChild).to.have.been.calledWith(test);
+            expect(blob.appendChild).to.have.callCount(1);
             done();
         });
     });
@@ -40,8 +40,8 @@ var dynamicSubscribe = function() {
             obj.width = "100";
             obj.content = "dynamic content";
 
-            sinon.assert.calledOnce(blob.appendChild);
-            sinon.assert.calledWith(blob.appendChild, test);
+            expect(blob.appendChild).to.have.been.calledWith(test);
+            expect(blob.appendChild).to.have.callCount(1);
             done();
         });
     });

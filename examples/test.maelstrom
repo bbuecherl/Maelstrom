@@ -1,0 +1,2 @@
+div#id(prop=test)[background=#333]
+  input.ui.fluid.input(type=text, value={{val}})

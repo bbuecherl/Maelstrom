@@ -2,119 +2,22 @@
 <html>
     <head>
         <title>Maelstrom</title>
-        <style>
-            body {
-                margin: 0;
-            }
-            #loader {
-                width: 100%;
-                height: 150px;
-                background: #333;
-            }
-            #loader-bottom {
-                width: 100%;
-                height: 100px;
-                padding-top: 50px;
-            }
-            #loader-bar {
-                width: 100%;
-                height: 5px;
-                background: #000;
-            }
-            #loader-bar-inner {
-                width: 0%;
-                height: 5px;
-                margin: 0 auto;
-            }
-            #loader-progress {
-                float: right;
-                padding: 10px 10px 0 0;
-                color: #FFF;
-            }
-            #loader-info {
-                float: left;
-                padding: 10px 0 0 10px;
-                color: #FFF;
-            }
-        </style>
     </head>
     <body>
-        <h1>Maelstrom</h1>
-        <h4>Simple, fast and live updating templating engine for client-side javascript</h4>
-        <h3>Example:</h3>
-    div#loader
-        div#loader-bottom
-            div#loader-bar
-                div#loader-bar-inner{width="[[$loader.prog]]",background-color="#365cff"}
-            div#loader-progress [[$loader.prog]]
-            div#loader-info [[$loader.info]], [[$variable]] and [[$loader.prog]]
-    br
-    div#test.withClass.andSecondClass(data-attr = " test ", data-test = "[[$variable]]" ) content here,
-        br
-        | additional content
-        br
-        | and content with [[$variable]]
-        br
-        span and an span element
-    // this is an comment
-    #test
-        | can i include <strong>html</strong>? currently not, sorry
-    // and this
-        is a blocked comment
+      <script>
+        var Maelstrom = require("./index");
+        //or require("../register");
 
-    if true
-        p this paragraph should be displayed.
-    else
-        p this paragraph should be always hidden.
+        var TestTemplate = Maelstrom.compile("./examples/test.maelstrom");
+        //or var TestTemplate = require("./test.maelstrom");
 
-        <pre style="background: #DDD; padding: 5px; overflow: auto;"><code id="test">
-    ul
-        each i in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-            li [[$i]] [[$loader.info]]
-        </code></pre>
-        <h3>Output:</h3>
-        <div id="out"></div>
-        <script src="src/polyfill.js" type="text/Javascript"></script>
-        <script src="src/helper.js" type="text/Javascript"></script>
-        <script src="src/dom.js" type="text/Javascript"></script>
-        <script src="src/buildStructure.js" type="text/Javascript"></script>
-        <script src="src/template/TemplateProcessor.js" type="text/Javascript"></script>
-        <script src="src/template/TemplateElement.js" type="text/Javascript"></script>
-        <script src="src/each/EachProcessor.js" type="text/Javascript"></script>
-        <script src="src/each/EachElement.js" type="text/Javascript"></script>
-        <script src="src/Template.js" type="text/Javascript"></script>
-        <script src="src/Maelstrom.js" type="text/Javascript"></script>
-        <script type="text/Javascript">
-            var obj = {
-                loader: {
-                    prog: "1%",
-                    info: "Testing...",
-                },
-                variable: "Variable",
-                arr: [1,2,3,4,5]
-            };
+        var objToWatch = {
+          val: 15
+        };
 
-            console.time("compile");
+        var el = TestTemplate(objToWatch);
 
-            var tmpl = Maelstrom.compile(document.getElementById("test").innerHTML, obj);
-            tmpl.append(document.getElementById("out"));
-
-            console.timeEnd("compile");
-
-            setInterval(function() {
-                obj.loader.prog = ((parseInt(obj.loader.prog)+1)%101)+"%";
-                obj.variable = Math.random();
-            },100);
-
-            var rerender = function(len) {
-                for(var i = 0; i < len; ++i) {
-                    obj.arr[i] = i+1;
-                }
-            };
-
-            console.log(tmpl);
-            console.log(tmpl.childs[0].childs[0]);
-            console.log(tmpl.childs[0].childs[0].derived[0]);
-        </script>
+        document.body.appendChild(el);
+      </script>
     </body>
 </html>

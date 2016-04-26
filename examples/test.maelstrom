@@ -1,3 +1,7 @@
-div#id(prop=test)[background=#333]
+div#id(prop=test)[background=#333] test
   input.ui.fluid.input(type=text, value={{val}})
   | Asdf {{val}} %
+h2 Processor test
+ul
+  %each i in [1, 2, 3, 4]
+    li {{i}}

@@ -2,6 +2,13 @@ div#id(prop=test)[background=#333] test
   input.ui.fluid.input(type=text, value={{val}})
   | Asdf {{val}} %
 h2 Processor test
+%include test_include.maelstrom
+h3 Each Processor
 ul
   %each i in [1, 2, 3, 4]
     li {{i}}
+h3 Transform Processor
+%transform marked
+  #### Markdown example
+
+  Lorem **Ipsum** ;)

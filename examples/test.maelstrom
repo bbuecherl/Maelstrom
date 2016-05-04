@@ -12,3 +12,6 @@ h3 Transform Processor
   #### Markdown example
 
   Lorem **Ipsum** ;)
+
+h3 Code Tester
+  p {{var x = 1; return x + z}}

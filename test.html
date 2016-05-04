@@ -5,11 +5,11 @@
     </head>
     <body>
       <script>
-        var Maelstrom = require("./index");
-        //or require("../register");
+        //var Maelstrom = require("./index");
+        require("./register");
 
-        var TestTemplate = Maelstrom.compile("./examples/test.maelstrom");
-        //or var TestTemplate = require("./test.maelstrom");
+        //var TestTemplate = Maelstrom.compile("./examples/test.maelstrom");
+        var TestTemplate = require("./examples/test.maelstrom");
 
         var objToWatch = {
           val: 15

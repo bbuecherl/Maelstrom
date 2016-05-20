@@ -10,7 +10,7 @@
   },
   "main": "index.js",
   "browser": {
-    "./utils/fs-wrap/node.js": "./utls/fs-wrap/browser.js"
+    "./utils/fs-wrap/node.js": "./utils/fs-wrap/browser.js"
   },
   "directories": {
     "example": "examples",

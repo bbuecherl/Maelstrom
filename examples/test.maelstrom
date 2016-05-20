@@ -5,7 +5,7 @@ h2 Processor test
 %include test_include.maelstrom
 h3 Each Processor
 ul
-  %each i in [1, 2, 3, 4]
+  %each i in {{var arr = []; for(var i = 0; i < val; ++i) arr.push(i); return arr}}
     li {{i}}
 h3 Transform Processor
 %transform marked
@@ -15,3 +15,4 @@ h3 Transform Processor
 
 h3 Code Tester
 p {{var x = 1; return x + z}}
+p {{var arr = []; for(var i = 0; i < val; ++i) arr.push(i); return arr}}

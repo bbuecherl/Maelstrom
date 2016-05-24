@@ -22,6 +22,7 @@
     "node-is": "^0.5.3",
     "object.observe": "^0.2.6",
     "regexgen.js": "^0.2.1",
+    "stream-to-string": "^1.0.1",
     "sync-request": "^3.0.1"
   },
   "scripts": {

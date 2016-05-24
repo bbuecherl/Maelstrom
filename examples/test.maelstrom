@@ -14,5 +14,4 @@ h3 Transform Processor
   Lorem **Ipsum** ;)
 
 h3 Code Tester
-p {{var x = 1; return x + z}}
 p {{var arr = []; for(var i = 0; i < val; ++i) arr.push(i); return arr}}

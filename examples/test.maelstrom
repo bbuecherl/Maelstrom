@@ -23,3 +23,12 @@ h3 if/elseif/else Tester
   span Value is equal to 11!
 %else
   span Value is not equal to 10 or 11!
+
+h3 switch/case/default Tester
+%switch val
+  %case 10
+    span case 10
+  %case 9
+    span case 9
+  %default
+    span default

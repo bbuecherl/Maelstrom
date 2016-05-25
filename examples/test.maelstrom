@@ -15,3 +15,11 @@ h3 Transform Processor
 
 h3 Code Tester
 p {{var arr = []; for(var i = 0; i < val; ++i) arr.push(i); return arr}}
+
+h3 if/elseif/else Tester
+%if val === 10
+  span Value is equal to 10!
+%elseif val === 11
+  span Value is equal to 11!
+%else
+  span Value is not equal to 10 or 11!

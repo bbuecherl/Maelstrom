@@ -1,5 +1,5 @@
 {
-  "name": "maelstrom",
+  "name": "maelstromjs",
   "version": "0.2.0",
   "author": "bbuecherl <bernhard.buecherl@gmail.com>",
   "description": "Simple, fast and live updating template engine",
@@ -19,9 +19,11 @@
   "dependencies": {
     "acorn": "^3.1.0",
     "jstransformer": "0.0.4",
+    "less": "^2.6.0",
     "node-is": "^0.5.3",
     "object.observe": "^0.2.6",
     "regexgen.js": "^0.2.1",
+    "shady-css-parser": "0.0.8",
     "stream-to-string": "^1.0.1",
     "sync-request": "^3.0.1"
   },

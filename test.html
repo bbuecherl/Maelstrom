@@ -5,18 +5,28 @@
     </head>
     <body>
       <script>
-        //var Maelstrom = require("./index");
-        require("./register");
+        var Maelstrom = require("./index");
 
-        //var TestTemplate = Maelstrom.compile("./examples/test.maelstrom");
-        var TestTemplate = require("./examples/test.maelstrom");
+        var TestTemplate = Maelstrom.compile("./examples/test.maelstrom");
 
         var objToWatch = {
           val: 15,
           z: 5
         };
 
-        var el = TestTemplate(objToWatch);
+        var base = {
+          x: {
+            v: 15
+          },
+          y: {
+            z: 5
+          }
+        };
+
+        var el = TestTemplate(Maelstrom.map(
+          Maelstrom.prop("val", base, "x.v"),
+          Maelstrom.prop("z", base, "y.z")
+        ));
 
         document.body.appendChild(el);
       </script>
